@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
 import { servicesData, getServiceBySlug } from "@/lib/services-data";
-import { GrantIntakeForm } from "@/components/grant-intake-form";
 
 export function generateStaticParams() {
   return servicesData.map((s) => ({ slug: s.slug }));
@@ -135,6 +134,8 @@ export default async function ServiceDetailPage({
                 <a
                   key={feature.title}
                   href={feature.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md hover:border-gold border border-transparent transition-all block"
                 >
                   {content}
@@ -151,9 +152,6 @@ export default async function ServiceDetailPage({
           </div>
         </div>
       </section>
-
-      {/* Grant Intake Form (Proposal Writing only) */}
-      {slug === "proposal-writing" && <GrantIntakeForm />}
 
       {/* Who It's For + How It Works */}
       <section className="py-20 lg:py-28 bg-navy">

@@ -101,7 +101,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Grant Proposals",
         description:
           "Compelling grant applications tailored to specific funders and their evaluation criteria.",
-        link: "#grant-intake-form",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "Project Proposals",
