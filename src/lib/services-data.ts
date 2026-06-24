@@ -1,6 +1,7 @@
 export interface ServiceFeature {
   title: string;
   description: string;
+  link?: string;
 }
 
 export interface ServiceDetail {
@@ -100,6 +101,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Grant Proposals",
         description:
           "Compelling grant applications tailored to specific funders and their evaluation criteria.",
+        link: "#grant-intake-form",
       },
       {
         title: "Project Proposals",

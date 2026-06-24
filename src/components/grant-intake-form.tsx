@@ -191,7 +191,7 @@ export function GrantIntakeForm() {
   ];
 
   return (
-    <section className="py-20 lg:py-28 bg-white">
+    <section id="grant-intake-form" className="py-20 lg:py-28 bg-white scroll-mt-20">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10">
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
 import { servicesData, getServiceBySlug } from "@/lib/services-data";
 import { GrantIntakeForm } from "@/components/grant-intake-form";
 
@@ -111,22 +111,43 @@ export default async function ServiceDetailPage({
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {service.features.map((feature) => (
-              <div
-                key={feature.title}
-                className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="w-11 h-11 bg-gold-light rounded-xl flex items-center justify-center mb-4">
-                  <CheckCircle2 className="w-5 h-5 text-gold" />
+            {service.features.map((feature) => {
+              const content = (
+                <>
+                  <div className="w-11 h-11 bg-gold-light rounded-xl flex items-center justify-center mb-4">
+                    <CheckCircle2 className="w-5 h-5 text-gold" />
+                  </div>
+                  <h3 className="text-base font-bold text-navy mb-2">
+                    {feature.title}
+                  </h3>
+                  <p className="text-body-text text-sm leading-relaxed">
+                    {feature.description}
+                  </p>
+                  {feature.link && (
+                    <span className="inline-flex items-center gap-1.5 text-gold text-xs font-semibold mt-3">
+                      Fill out form <ExternalLink className="w-3.5 h-3.5" />
+                    </span>
+                  )}
+                </>
+              );
+
+              return feature.link ? (
+                <a
+                  key={feature.title}
+                  href={feature.link}
+                  className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md hover:border-gold border border-transparent transition-all block"
+                >
+                  {content}
+                </a>
+              ) : (
+                <div
+                  key={feature.title}
+                  className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  {content}
                 </div>
-                <h3 className="text-base font-bold text-navy mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-body-text text-sm leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
