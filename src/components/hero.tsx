@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="relative h-[750px] flex items-center overflow-hidden">
+    <section className="relative h-[650px] flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-navy">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30"
