@@ -11,12 +11,12 @@ const quickLinks = [
 ];
 
 const serviceLinks = [
-  "Web Design",
-  "Proposal Writing & Grants",
-  "CV & Cover Letter Writing",
-  "Data Entry",
-  "Job Matching CVs",
-  "Graphic Design",
+  { label: "Web Design", href: "/services/web-development" },
+  { label: "Proposal Writing & Grants", href: "/services/proposal-writing" },
+  { label: "CV & Cover Letter Writing", href: "/services/cv-cover-letters" },
+  { label: "Data Entry", href: "/services/data-services" },
+  { label: "Job Matching CVs", href: "/services/job-matching" },
+  { label: "Graphic Design", href: "/services/graphic-design" },
 ];
 
 const socialLinks = [
@@ -78,12 +78,12 @@ export function Footer() {
             <h4 className="text-white font-semibold mb-5">Our Services</h4>
             <ul className="space-y-3">
               {serviceLinks.map((service) => (
-                <li key={service}>
+                <li key={service.href}>
                   <Link
-                    href="/services"
+                    href={service.href}
                     className="text-white/50 text-sm hover:text-gold transition-colors"
                   >
-                    {service}
+                    {service.label}
                   </Link>
                 </li>
               ))}
@@ -92,10 +92,25 @@ export function Footer() {
 
           <div>
             <h4 className="text-white font-semibold mb-5">Contact Info</h4>
-            <div className="space-y-3 text-white/50 text-sm">
-              <p>josiah.mwangi@email.com</p>
-              <p>+254 700 000 000</p>
-              <p>Nairobi, Kenya</p>
+            <div className="space-y-3 text-sm">
+              <a
+                href="mailto:josiah.mwangi@email.com"
+                className="block text-white/50 hover:text-gold transition-colors"
+              >
+                josiah.mwangi@email.com
+              </a>
+              <a
+                href="tel:+254700000000"
+                className="block text-white/50 hover:text-gold transition-colors"
+              >
+                +254 700 000 000
+              </a>
+              <Link
+                href="/contact"
+                className="block text-white/50 hover:text-gold transition-colors"
+              >
+                Nairobi, Kenya
+              </Link>
             </div>
           </div>
         </div>
@@ -107,18 +122,18 @@ export function Footer() {
             &copy; 2025 Josiah Mwangi. All Rights Reserved.
           </p>
           <div className="flex gap-6">
-            <a
-              href="#"
+            <Link
+              href="/contact"
               className="text-white/40 text-sm hover:text-gold transition-colors"
             >
               Privacy Policy
-            </a>
-            <a
-              href="#"
+            </Link>
+            <Link
+              href="/contact"
               className="text-white/40 text-sm hover:text-gold transition-colors"
             >
               Terms of Service
-            </a>
+            </Link>
           </div>
         </div>
       </div>
