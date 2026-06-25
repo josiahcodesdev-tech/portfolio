@@ -29,8 +29,8 @@ export function Footer() {
   return (
     <footer className="bg-navy pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
-          <div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+          <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="inline-block">
               <h3 className="font-sans text-2xl font-bold text-white mb-2">
                 Josiah <span className="text-gold">Mwangi</span>
