@@ -34,6 +34,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Responsive Design",
         description:
           "Fully responsive layouts that look great on mobile, tablet, and desktop devices.",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "UI/UX Design",
@@ -169,6 +170,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Logo & Brand Identity",
         description:
           "Distinctive logos and comprehensive brand guidelines that define your visual identity.",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "Social Media Graphics",
@@ -236,6 +238,7 @@ export const servicesData: ServiceDetail[] = [
         title: "ATS Optimization",
         description:
           "CVs structured and formatted to pass Applicant Tracking Systems used by major employers.",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "Professional Formatting",
@@ -303,6 +306,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Job-Specific Tailoring",
         description:
           "Your CV restructured and rewritten to match each specific job description.",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "Keyword Matching",
@@ -370,6 +374,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Data Entry",
         description:
           "Fast and accurate data entry into spreadsheets, databases, CRMs, and custom systems.",
+        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
       },
       {
         title: "Database Management",
