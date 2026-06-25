@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 
 export function Hero() {
   return (
-    <section className="relative h-[650px] flex items-center overflow-hidden">
+    <section className="relative h-[630px] flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-navy">
         <div
           className="absolute inset-0 bg-cover bg-center opacity-30"
@@ -17,7 +17,7 @@ export function Hero() {
 
       <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center">
         <p className="text-gold font-medium text-sm tracking-widest uppercase mb-4">
-          Professional Consultant
+          
         </p>
         <h1 className="font-sans text-4xl sm:text-5xl lg:text-[64px] font-bold text-white leading-[1.1] mb-6">
           Empowering Your Success
