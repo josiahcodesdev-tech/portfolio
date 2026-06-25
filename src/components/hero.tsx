@@ -9,13 +9,6 @@ export function Hero() {
       <div className="absolute inset-0">
         <div className="absolute -top-32 -right-32 w-[480px] h-[480px] bg-gold/20 rounded-full blur-[120px]" />
         <div className="absolute -bottom-40 -left-20 w-[420px] h-[420px] bg-gold/10 rounded-full blur-[120px]" />
-        <div
-          className="absolute inset-0 opacity-[0.04] bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1521737711867-e3b97375f902?w=1920&q=80')",
-          }}
-        />
       </div>
 
       <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
@@ -89,14 +82,6 @@ export function Hero() {
           {/* Right — portrait + floating accents */}
           <div className="relative mx-auto w-full max-w-sm lg:max-w-none">
             <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden border border-white/10 bg-gradient-to-b from-navy-light to-navy shadow-2xl">
-              <div
-                className="absolute inset-0 bg-cover bg-center opacity-40"
-                style={{
-                  backgroundImage:
-                    "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=80')",
-                }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-navy via-navy/30 to-transparent" />
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-28 h-28 rounded-full bg-gold/15 backdrop-blur-sm border border-gold/30 flex items-center justify-center">
                   <span className="text-4xl font-sans font-bold text-gold">
