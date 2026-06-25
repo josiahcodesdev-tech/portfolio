@@ -32,7 +32,7 @@ export function Process() {
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
             How It Works
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy">
+          <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy">
             Simple, Structured Support
           </h2>
         </div>

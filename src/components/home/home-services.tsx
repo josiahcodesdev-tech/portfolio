@@ -98,7 +98,7 @@ export function HomeServices() {
             <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
               Services Overview
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-white">
               What I Do
             </h2>
           </div>
@@ -145,7 +145,7 @@ export function HomeServices() {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy/60 to-transparent" />
                     <div className="absolute top-4 left-4">
-                      <span className="text-gold font-bold text-2xl font-display">
+                      <span className="text-gold font-bold text-2xl font-sans">
                         {service.num}
                       </span>
                     </div>

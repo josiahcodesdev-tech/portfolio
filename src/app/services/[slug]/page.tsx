@@ -43,7 +43,7 @@ export default async function ServiceDetailPage({
           <span className="inline-block bg-gold/20 text-gold text-xs font-semibold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
             Service {service.num}
           </span>
-          <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-3">
+          <h1 className="font-sans text-4xl sm:text-5xl font-bold text-white mb-3">
             {service.title}
           </h1>
           <p className="text-white/70 text-lg">{service.tagline}</p>
@@ -65,7 +65,7 @@ export default async function ServiceDetailPage({
               <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
                 What We Do
               </p>
-              <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy mb-6 leading-tight">
+              <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy mb-6 leading-tight">
                 {service.title},
                 <br />
                 Personalised to You
@@ -100,7 +100,7 @@ export default async function ServiceDetailPage({
             <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
               What&apos;s Included
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy mb-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy mb-4">
               Everything You Need to Succeed
             </h2>
             <p className="text-body-text max-w-2xl mx-auto">
@@ -162,7 +162,7 @@ export default async function ServiceDetailPage({
               <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
                 Who It&apos;s For
               </p>
-              <h2 className="font-display text-3xl font-bold text-white mb-6">
+              <h2 className="font-sans text-3xl font-bold text-white mb-6">
                 Built for People Who Want More
               </h2>
               <p className="text-white/60 leading-relaxed mb-8">
@@ -185,7 +185,7 @@ export default async function ServiceDetailPage({
               <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
                 How It Works
               </p>
-              <h2 className="font-display text-3xl font-bold text-white mb-8">
+              <h2 className="font-sans text-3xl font-bold text-white mb-8">
                 Our Process
               </h2>
               <div className="space-y-6">
@@ -213,7 +213,7 @@ export default async function ServiceDetailPage({
       </section>
 
       {/* CTA */}
-      <section className="relative py-20 overflow-hidden">
+      <section className="relative py-24 lg:py-32 overflow-hidden">
         <div className="absolute inset-0">
           <div
             className="absolute inset-0 bg-cover bg-center"
@@ -224,31 +224,24 @@ export default async function ServiceDetailPage({
           />
           <div className="absolute inset-0 bg-navy/85" />
         </div>
-        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-white leading-snug">
-              Ready to get started?
-            </h2>
-            <p className="text-white/60 text-sm mt-1">
-              Book a free consultation and let&apos;s discuss how{" "}
-              {service.title} can help you.
-            </p>
-          </div>
-          <div className="flex items-center gap-3 shrink-0">
-            <Link href="/contact">
-              <Button className="bg-gold text-navy font-bold hover:bg-gold-hover rounded-full px-6 py-5 text-sm cursor-pointer transition-all">
-                Start a conversation
-              </Button>
-            </Link>
-            <Link href="/services">
-              <Button
-                variant="outline"
-                className="border-2 border-white/30 text-white bg-white/10 hover:bg-white hover:text-navy font-semibold rounded-full px-6 py-5 text-sm cursor-pointer backdrop-blur-sm transition-all"
-              >
-                All services
-              </Button>
-            </Link>
-          </div>
+        <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-gold font-medium text-sm tracking-widest uppercase mb-5">
+            Take the Next Step
+          </p>
+          <h2 className="font-sans text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white mb-6 leading-tight">
+            Ready to Get Started
+            <br />
+            with {service.title}?
+          </h2>
+          <p className="text-white/60 text-lg mb-10 max-w-xl mx-auto">
+            Book a free consultation and take the next step towards professional
+            success and confidence.
+          </p>
+          <Link href="/contact">
+            <Button className="bg-gold text-navy font-bold hover:bg-gold-hover px-10 py-6 text-base cursor-pointer transition-all">
+              Book Your Free Consultation
+            </Button>
+          </Link>
         </div>
       </section>
     </>

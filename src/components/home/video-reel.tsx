@@ -16,7 +16,7 @@ export function VideoReel() {
             <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
               Video Reel
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy mb-4">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy mb-4">
               How I work
             </h2>
             <p className="text-body-text text-lg leading-relaxed">

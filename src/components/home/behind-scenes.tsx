@@ -39,7 +39,7 @@ export function BehindScenes() {
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
             Behind the Scenes
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="font-sans text-3xl sm:text-4xl font-bold text-white mb-4">
             Real work, real results.
             <br />
             <span className="text-white/60 font-normal text-xl sm:text-2xl font-sans">

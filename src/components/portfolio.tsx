@@ -77,7 +77,7 @@ export function Portfolio() {
             <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
               Our Work
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy">
               Portfolio & Work Samples
             </h2>
             <p className="mt-4 text-body-text max-w-2xl mx-auto">

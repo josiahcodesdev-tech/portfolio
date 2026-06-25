@@ -43,7 +43,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-[72px]">
           <Link
             href="/"
-            className={`font-display text-2xl font-bold ${isHome && !scrolled ? "text-white" : "text-navy"}`}
+            className={`font-sans text-2xl font-bold ${isHome && !scrolled ? "text-white" : "text-navy"}`}
           >
             Josiah <span className="text-gold">Mwangi</span>
           </Link>

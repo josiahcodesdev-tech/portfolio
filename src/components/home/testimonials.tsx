@@ -35,7 +35,7 @@ export function Testimonials() {
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
             Testimonials
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy">
+          <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy">
             What Clients Say
           </h2>
         </div>

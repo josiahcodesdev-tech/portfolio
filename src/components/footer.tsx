@@ -32,7 +32,7 @@ export function Footer() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           <div>
             <Link href="/" className="inline-block">
-              <h3 className="font-display text-2xl font-bold text-white mb-2">
+              <h3 className="font-sans text-2xl font-bold text-white mb-2">
                 Josiah <span className="text-gold">Mwangi</span>
               </h3>
             </Link>

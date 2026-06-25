@@ -162,7 +162,7 @@ export function GrantIntakeForm() {
           <div className="w-20 h-20 bg-gold-light rounded-full flex items-center justify-center mx-auto mb-6">
             <CheckCircle2 className="w-10 h-10 text-gold" />
           </div>
-          <h2 className="font-display text-3xl font-bold text-navy mb-4">
+          <h2 className="font-sans text-3xl font-bold text-navy mb-4">
             Form Submitted Successfully
           </h2>
           <p className="text-body-text mb-8">
@@ -197,7 +197,7 @@ export function GrantIntakeForm() {
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
             Client Intake
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy mb-4">
+          <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy mb-4">
             Grant Writing Intake Form
           </h2>
           <p className="text-body-text max-w-2xl mx-auto">
@@ -230,7 +230,7 @@ export function GrantIntakeForm() {
             {/* Section 1: Organisation Profile */}
             {step === 0 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 1: Organisation Profile
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-5">
@@ -302,7 +302,7 @@ export function GrantIntakeForm() {
             {/* Section 2: Services & Operations */}
             {step === 1 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 2: Services & Operations
                 </h3>
                 <CheckboxGroup
@@ -356,7 +356,7 @@ export function GrantIntakeForm() {
             {/* Section 3: Target Clients & Past Projects */}
             {step === 2 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 3: Target Clients & Past Projects
                 </h3>
                 <CheckboxGroup
@@ -422,7 +422,7 @@ export function GrantIntakeForm() {
             {/* Section 4: Funding Opportunity */}
             {step === 3 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 4: The Funding Opportunity
                 </h3>
                 <div className="grid sm:grid-cols-2 gap-5">
@@ -516,7 +516,7 @@ export function GrantIntakeForm() {
             {/* Section 5: Capacity & Documents */}
             {step === 4 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 5: Organisational Capacity & Documents
                 </h3>
                 <RadioGroup
@@ -571,7 +571,7 @@ export function GrantIntakeForm() {
             {/* Section 6: Scope & Declaration */}
             {step === 5 && (
               <div className="space-y-6">
-                <h3 className="font-display text-xl font-bold text-navy border-b border-gray-200 pb-3">
+                <h3 className="font-sans text-xl font-bold text-navy border-b border-gray-200 pb-3">
                   Section 6: Scope of Work & Declaration
                 </h3>
                 <CheckboxGroup

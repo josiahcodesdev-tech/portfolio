@@ -23,7 +23,7 @@ export function Stats() {
           <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
             Why Choose Us
           </p>
-          <h2 className="font-display text-3xl sm:text-4xl font-bold text-white">
+          <h2 className="font-sans text-3xl sm:text-4xl font-bold text-white">
             Trusted by Clients Across Industries
           </h2>
           <p className="mt-4 text-white/70 max-w-2xl mx-auto">

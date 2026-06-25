@@ -32,7 +32,7 @@ export function About() {
             <div className="aspect-[4/5] bg-white rounded-3xl shadow-lg flex items-center justify-center overflow-hidden">
               <div className="text-center text-muted-foreground">
                 <div className="w-32 h-32 bg-light-gray rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-4xl text-navy/30 font-display font-bold">
+                  <span className="text-4xl text-navy/30 font-sans font-bold">
                     JM
                   </span>
                 </div>
@@ -51,7 +51,7 @@ export function About() {
             <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
               About Me
             </p>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-navy mb-6">
+            <h2 className="font-sans text-3xl sm:text-4xl font-bold text-navy mb-6">
               Learn From Experience
             </h2>
             <p className="text-body-text leading-relaxed mb-4">

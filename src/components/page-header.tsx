@@ -15,7 +15,7 @@ export function PageHeader({ label, title, description }: PageHeaderProps) {
         <p className="text-gold font-medium text-sm tracking-widest uppercase mb-3">
           {label}
         </p>
-        <h1 className="font-display text-4xl sm:text-5xl font-bold text-white mb-4">
+        <h1 className="font-sans text-4xl sm:text-5xl font-bold text-white mb-4">
           {title}
         </h1>
         <p className="text-white/70 text-lg max-w-2xl mx-auto">{description}</p>

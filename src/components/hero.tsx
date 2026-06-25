@@ -19,7 +19,7 @@ export function Hero() {
         <p className="text-gold font-medium text-sm tracking-widest uppercase mb-4">
           Professional Consultant
         </p>
-        <h1 className="font-display text-4xl sm:text-5xl lg:text-[64px] font-bold text-white leading-[1.1] mb-6">
+        <h1 className="font-sans text-4xl sm:text-5xl lg:text-[64px] font-bold text-white leading-[1.1] mb-6">
           Empowering Your Success
           <br />
           <span className="text-gold">Through Expert Consulting</span>
