@@ -18,6 +18,7 @@ import {
   FileDown,
   RotateCcw,
   X,
+  Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +44,7 @@ export function CvOptimizer() {
   const [isDragOver, setIsDragOver] = useState(false);
   const [atsScore, setAtsScore] = useState<ATSScore | null>(null);
   const [fileName, setFileName] = useState("");
+  const [aiLoading, setAiLoading] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { register, control, getValues, reset, watch, setValue } = useForm<CVData>({
@@ -183,6 +185,92 @@ export function CvOptimizer() {
     setStep(1);
   }, [reset]);
 
+  const enhanceSummary = useCallback(async () => {
+    setAiLoading("summary");
+    try {
+      const data = getValues();
+      const skills = data.skillCategories.map((c) => `${c.category}: ${c.items}`).join("; ");
+      const experience = data.workExperience.map((e) => e.jobTitle).join(", ");
+      const res = await fetch("/api/ai/enhance-cv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "enhance-summary",
+          data: {
+            currentSummary: data.professionalSummary,
+            jobTitle: data.contactInfo.tagline || data.workExperience[0]?.jobTitle || "",
+            skills,
+            experience,
+          },
+        }),
+      });
+      const json = await res.json();
+      if (json.result) setValue("professionalSummary", json.result);
+    } catch { /* silently fail */ }
+    setAiLoading(null);
+  }, [getValues, setValue]);
+
+  const enhanceBullets = useCallback(async (index: number) => {
+    setAiLoading(`exp-${index}`);
+    try {
+      const data = getValues();
+      const exp = data.workExperience[index];
+      const div = document.createElement("div");
+      div.innerHTML = exp.responsibilities;
+      const plainBullets = Array.from(div.querySelectorAll("li"))
+        .map((li) => li.textContent?.trim())
+        .filter(Boolean)
+        .join("\n");
+      const bullets = plainBullets || div.textContent || exp.responsibilities;
+
+      const res = await fetch("/api/ai/enhance-cv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "enhance-bullets",
+          data: { bullets, jobTitle: exp.jobTitle, company: exp.company },
+        }),
+      });
+      const json = await res.json();
+      if (json.result && Array.isArray(json.result)) {
+        const html = "<ul>" + json.result.map((b: string) => `<li>${b}</li>`).join("") + "</ul>";
+        setValue(`workExperience.${index}.responsibilities`, html);
+      }
+    } catch { /* silently fail */ }
+    setAiLoading(null);
+  }, [getValues, setValue]);
+
+  const suggestSkills = useCallback(async () => {
+    setAiLoading("skills");
+    try {
+      const data = getValues();
+      const experience = data.workExperience
+        .map((e) => `${e.jobTitle}: ${e.responsibilities.replace(/<[^>]*>/g, "").slice(0, 200)}`)
+        .join("\n");
+      const currentSkills = data.skillCategories.map((c) => `${c.category}: ${c.items}`).join("; ");
+      const jobTitle = data.contactInfo.tagline || data.workExperience[0]?.jobTitle || "";
+
+      const res = await fetch("/api/ai/enhance-cv", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "suggest-skills",
+          data: { experience, currentSkills, jobTitle },
+        }),
+      });
+      const json = await res.json();
+      if (json.result && Array.isArray(json.result)) {
+        const newSkills = json.result.map((s: { category: string; items: string }) => ({
+          id: uid(),
+          category: s.category,
+          items: s.items,
+        }));
+        setValue("skillCategories", newSkills);
+      }
+    } catch { /* silently fail */ }
+    setAiLoading(null);
+  }, [getValues, setValue]);
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Step Indicators */}
@@ -288,6 +376,7 @@ export function CvOptimizer() {
               placeholder="4-6 sentences summarising your professional background, key tools, and career goal..."
               className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
             />
+            <AiButton label="Enhance Summary with AI" loading={aiLoading === "summary"} onClick={enhanceSummary} />
           </Section>
 
           {/* Core Skills (categorized) */}
@@ -295,6 +384,7 @@ export function CvOptimizer() {
             title="Core Skills"
             onAdd={() => appendSkill({ id: uid(), category: "", items: "" })}
           >
+            <AiButton label="Suggest Skills from Experience" loading={aiLoading === "skills"} onClick={suggestSkills} />
             {skillFields.length === 0 && <EmptyState text="No skill categories yet." />}
             {skillFields.map((field, i) => (
               <div key={field.id} className="bg-white rounded-xl p-5 border border-gray-200 mb-4">
@@ -345,6 +435,7 @@ export function CvOptimizer() {
                     placeholder="Use the toolbar to format — add bullet points, bold key metrics, italicize tools..."
                     minHeight="120px"
                   />
+                  <AiButton label="Enhance Bullets with AI" loading={aiLoading === `exp-${i}`} onClick={() => enhanceBullets(i)} />
                 </div>
               </div>
             ))}
@@ -662,6 +753,24 @@ function RemoveBtn({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" onClick={onClick} className="text-red-400 hover:text-red-600 transition-colors cursor-pointer">
       <Trash2 className="w-4 h-4" />
+    </button>
+  );
+}
+
+function AiButton({ label, loading, onClick }: { label: string; loading: boolean; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={loading}
+      className="inline-flex items-center gap-2 mt-3 px-4 py-2 text-xs font-semibold text-gold bg-gold-light hover:bg-gold hover:text-navy rounded-full transition-all cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      {loading ? (
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+      ) : (
+        <Sparkles className="w-3.5 h-3.5" />
+      )}
+      {loading ? "Enhancing..." : label}
     </button>
   );
 }

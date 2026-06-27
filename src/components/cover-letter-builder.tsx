@@ -10,6 +10,7 @@ import {
   Download,
   RotateCcw,
   Sparkles,
+  Loader2,
   AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -62,8 +63,31 @@ export function CoverLetterBuilder() {
     },
   });
 
-  const generateLetter = useCallback(() => {
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const generateLetter = useCallback(async () => {
+    setIsGenerating(true);
     const d = getValues();
+
+    try {
+      // Try AI generation first
+      const res = await fetch("/api/ai/generate-cover-letter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(d),
+      });
+      const json = await res.json();
+      if (json.result && !json.error) {
+        setGeneratedLetter(json.result);
+        setStep(3);
+        setIsGenerating(false);
+        return;
+      }
+    } catch {
+      // AI unavailable — fall back to template
+    }
+
+    // Template fallback
     const today = new Date().toLocaleDateString("en-GB", {
       day: "numeric",
       month: "long",
@@ -74,70 +98,36 @@ export function CoverLetterBuilder() {
       ? `${d.recipientName}${d.recipientTitle ? `, ${d.recipientTitle}` : ""}`
       : "The Hiring Team";
 
-    // Extract key terms from JD for keyword alignment
-    const jdWords = d.jobDescription.toLowerCase();
-    const keyTerms: string[] = [];
     const techPatterns = /\b(excel|sql|spss|power bi|python|java|react|node|aws|docker|agile|scrum|sap|crm|erp|hmis|m&e|data analysis|project management|budgeting|reporting|stakeholder|compliance|governance)\b/gi;
     const matches = d.jobDescription.match(techPatterns);
-    if (matches) {
-      const unique = [...new Set(matches.map((m) => m.toLowerCase()))];
-      keyTerms.push(...unique.slice(0, 8));
-    }
+    const keyTerms = matches ? [...new Set(matches.map((m) => m.toLowerCase()))].slice(0, 8) : [];
 
-    const qualLines = d.qualifications
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
+    const qualLines = d.qualifications.split("\n").map((l) => l.trim()).filter(Boolean);
+    const expLines = d.relevantExperience.split("\n").map((l) => l.trim()).filter(Boolean);
 
-    const expLines = d.relevantExperience
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
-
-    // Build the cover letter
     let letter = `<p>${today}</p>`;
     letter += `<p>${recipient}<br>${d.companyName}${d.companyAddress ? `<br>${d.companyAddress}` : ""}</p>`;
-    letter += `<p><b>RE: Application for ${d.jobTitle}${d.companyName ? ` at ${d.companyName}` : ""}</b></p>`;
+    letter += `<p><b>RE: Application for ${d.jobTitle} at ${d.companyName}</b></p>`;
     letter += `<p>Dear ${d.recipientName || "Hiring Manager"},</p>`;
-
-    // Opening paragraph — connect to company mission
     letter += `<p>I am writing to express my strong interest in the <b>${d.jobTitle}</b> position at <b>${d.companyName}</b>. `;
-    if (d.whyThisCompany) {
-      letter += `${d.whyThisCompany} `;
-    }
+    if (d.whyThisCompany) letter += `${d.whyThisCompany} `;
     letter += `I am confident that my qualifications and experience make me an excellent fit for this role.</p>`;
-
-    // Qualifications paragraph
-    if (qualLines.length > 0) {
-      letter += `<p>I bring the following qualifications that directly align with the requirements of this position:</p><ul>`;
-      for (const q of qualLines) {
-        letter += `<li>${q}</li>`;
-      }
-      letter += `</ul>`;
+    if (qualLines.length) {
+      letter += `<p>I bring the following qualifications:</p><ul>${qualLines.map((q) => `<li>${q}</li>`).join("")}</ul>`;
     }
-
-    // Experience paragraph
-    if (expLines.length > 0) {
-      letter += `<p>In my professional experience, I have demonstrated the competencies this role demands:</p><ul>`;
-      for (const e of expLines) {
-        letter += `<li>${e}</li>`;
-      }
-      letter += `</ul>`;
+    if (expLines.length) {
+      letter += `<p>In my professional experience:</p><ul>${expLines.map((e) => `<li>${e}</li>`).join("")}</ul>`;
     }
-
-    // Keywords / skills alignment
-    if (keyTerms.length > 0) {
-      letter += `<p>My skill set includes proficiency in <b>${keyTerms.join(", ")}</b>, which I understand are central to success in this role. `;
-      letter += `I am eager to apply these competencies to contribute to ${d.companyName}'s objectives.</p>`;
+    if (keyTerms.length) {
+      letter += `<p>My skill set includes proficiency in <b>${keyTerms.join(", ")}</b>, which are central to success in this role.</p>`;
     }
-
-    // Closing
-    letter += `<p>I would welcome the opportunity to discuss how my background, skills, and enthusiasm align with the goals of your team. I am available for an interview at your earliest convenience and can be reached at <b>${d.email}</b>${d.phone ? ` or <b>${d.phone}</b>` : ""}.</p>`;
-    letter += `<p>Thank you for considering my application. I look forward to hearing from you.</p>`;
-    letter += `<p>Yours sincerely,<br><b>${d.fullName}</b>${d.location ? `<br>${d.location}` : ""}${d.linkedin ? `<br>${d.linkedin}` : ""}</p>`;
+    letter += `<p>I would welcome the opportunity to discuss how my background aligns with your team's goals. I am available at <b>${d.email}</b>${d.phone ? ` or <b>${d.phone}</b>` : ""}.</p>`;
+    letter += `<p>Thank you for considering my application.</p>`;
+    letter += `<p>Yours sincerely,<br><b>${d.fullName}</b>${d.location ? `<br>${d.location}` : ""}</p>`;
 
     setGeneratedLetter(letter);
     setStep(3);
+    setIsGenerating(false);
   }, [getValues]);
 
   const handleExportPdf = useCallback(async () => {
@@ -302,10 +292,14 @@ export function CoverLetterBuilder() {
             <Button
               type="button"
               onClick={generateLetter}
-              disabled={!canProceed(2)}
+              disabled={!canProceed(2) || isGenerating}
               className="bg-gold text-navy font-bold hover:bg-gold-hover rounded-full px-6 py-5 text-sm cursor-pointer transition-all disabled:opacity-50"
             >
-              <Sparkles className="w-4 h-4 mr-2" /> Generate Cover Letter
+              {isGenerating ? (
+                <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Generating with AI...</>
+              ) : (
+                <><Sparkles className="w-4 h-4 mr-2" /> Generate Cover Letter</>
+              )}
             </Button>
           </div>
         </div>
