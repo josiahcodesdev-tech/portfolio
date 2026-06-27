@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import {
   Upload,
   FileText,
+  FilePlus,
   CheckCircle2,
   XCircle,
   Download,
@@ -149,6 +150,27 @@ export function CvOptimizer() {
     return Math.random().toString(36).slice(2, 9);
   }
 
+  const createFromScratch = useCallback(() => {
+    reset({
+      contactInfo: { fullName: "", tagline: "", email: "", phone: "", location: "", linkedin: "" },
+      professionalSummary: "",
+      skillCategories: [
+        { id: Math.random().toString(36).slice(2, 9), category: "", items: "" },
+      ],
+      workExperience: [
+        { id: Math.random().toString(36).slice(2, 9), jobTitle: "", company: "", location: "", startDate: "", endDate: "", responsibilities: "" },
+      ],
+      projects: [],
+      education: [
+        { id: Math.random().toString(36).slice(2, 9), degree: "", institution: "", location: "", graduationDate: "", details: "" },
+      ],
+      certifications: [],
+      languages: "",
+      references: "",
+    });
+    setStep(1);
+  }, [reset]);
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Step Indicators */}
@@ -204,6 +226,31 @@ export function CvOptimizer() {
               <p className="text-red-700 text-sm">{error}</p>
             </div>
           )}
+
+          {/* Divider */}
+          <div className="flex items-center gap-4 my-8">
+            <div className="flex-1 h-px bg-gray-200" />
+            <span className="text-body-text text-sm font-medium">or</span>
+            <div className="flex-1 h-px bg-gray-200" />
+          </div>
+
+          {/* Create from Scratch */}
+          <div
+            onClick={createFromScratch}
+            className="border-2 border-dashed border-gray-300 hover:border-gold/50 hover:bg-light-gray rounded-2xl p-8 sm:p-10 cursor-pointer transition-all"
+          >
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-14 h-14 bg-navy/5 rounded-2xl flex items-center justify-center">
+                <FilePlus className="w-7 h-7 text-navy/60" />
+              </div>
+              <div>
+                <p className="text-navy font-semibold text-lg mb-1">Create a New CV from Scratch</p>
+                <p className="text-body-text text-sm">
+                  Fill in your details manually and build an ATS-optimized CV from the ground up
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
