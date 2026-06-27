@@ -238,7 +238,7 @@ export const servicesData: ServiceDetail[] = [
         title: "ATS Optimization",
         description:
           "CVs structured and formatted to pass Applicant Tracking Systems used by major employers.",
-        link: "https://www.cognitoforms.com/josiahmwangi/grantwritingclientintakeformjosiahmwangi",
+        link: "/services/cv-cover-letters/optimize",
       },
       {
         title: "Professional Formatting",

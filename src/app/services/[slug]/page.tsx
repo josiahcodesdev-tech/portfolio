@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, ArrowRight, ExternalLink } from "lucide-react";
+import {
+  CheckCircle2,
+  ArrowRight,
+  ExternalLink,
+  FileSearch,
+} from "lucide-react";
 import { servicesData, getServiceBySlug } from "@/lib/services-data";
 
 export function generateStaticParams() {
@@ -124,13 +129,28 @@ export default async function ServiceDetailPage({
                   </p>
                   {feature.link && (
                     <span className="inline-flex items-center gap-1.5 text-gold text-xs font-semibold mt-3">
-                      Fill out form <ExternalLink className="w-3.5 h-3.5" />
+                      {feature.link.startsWith("/")
+                        ? "Try it free"
+                        : "Fill out form"}{" "}
+                      {feature.link.startsWith("/") ? (
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      ) : (
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      )}
                     </span>
                   )}
                 </>
               );
 
-              return feature.link ? (
+              return feature.link?.startsWith("/") ? (
+                <Link
+                  key={feature.title}
+                  href={feature.link}
+                  className="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md hover:border-gold border border-transparent transition-all block"
+                >
+                  {content}
+                </Link>
+              ) : feature.link ? (
                 <a
                   key={feature.title}
                   href={feature.link}
@@ -152,6 +172,32 @@ export default async function ServiceDetailPage({
           </div>
         </div>
       </section>
+
+      {/* ATS Optimizer CTA (cv-cover-letters only) */}
+      {slug === "cv-cover-letters" && (
+        <section className="py-16 lg:py-20 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="bg-gold-light rounded-2xl p-10 sm:p-14">
+              <div className="w-16 h-16 bg-gold/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <FileSearch className="w-8 h-8 text-gold" />
+              </div>
+              <h2 className="font-sans text-2xl sm:text-3xl font-bold text-navy mb-4">
+                Free ATS CV Optimizer
+              </h2>
+              <p className="text-body-text max-w-xl mx-auto mb-8">
+                Upload your existing CV and instantly optimize it for Applicant
+                Tracking Systems. Edit sections, check your ATS score, and
+                download in PDF or Word.
+              </p>
+              <Link href="/services/cv-cover-letters/optimize">
+                <Button className="bg-gold text-navy font-bold hover:bg-gold-hover rounded-full px-8 py-5 text-sm cursor-pointer transition-all">
+                  Optimize Your CV Now
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Who It's For + How It Works */}
       <section className="py-20 lg:py-28 bg-navy">
