@@ -254,6 +254,7 @@ export const servicesData: ServiceDetail[] = [
         title: "Cover Letter Writing",
         description:
           "Persuasive cover letters that complement your CV and address the specific role.",
+        link: "/services/cv-cover-letters/cover-letter",
       },
       {
         title: "LinkedIn Optimization",
