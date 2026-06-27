@@ -22,6 +22,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RichEditor, linesToRichHtml } from "@/components/rich-editor";
 import type { CVData, ATSScore } from "@/lib/cv-parser";
 
 const STEPS = ["Upload", "Edit Sections", "ATS Analysis", "Download"] as const;
@@ -44,7 +45,7 @@ export function CvOptimizer() {
   const [fileName, setFileName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { register, control, getValues, reset, watch } = useForm<CVData>({
+  const { register, control, getValues, reset, watch, setValue } = useForm<CVData>({
     defaultValues: {
       contactInfo: { fullName: "", tagline: "", email: "", phone: "", location: "", linkedin: "" },
       professionalSummary: "",
@@ -83,6 +84,16 @@ export function CvOptimizer() {
           throw new Error("The file appears empty or contains very little text. It may be a scanned PDF.");
         }
         const parsed = parseRawTextToCV(text);
+        // Convert plain-text responsibilities/details to HTML for the rich editor
+        for (const exp of parsed.workExperience) {
+          exp.responsibilities = linesToRichHtml(exp.responsibilities);
+        }
+        for (const proj of parsed.projects) {
+          proj.details = linesToRichHtml(proj.details);
+        }
+        for (const edu of parsed.education) {
+          edu.details = linesToRichHtml(edu.details);
+        }
         reset(parsed);
         setStep(1);
       } catch (err) {
@@ -327,11 +338,12 @@ export function CvOptimizer() {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <label className={labelClass}>Responsibilities & Achievements (one per line)</label>
-                  <Textarea
-                    {...register(`workExperience.${i}.responsibilities`)}
-                    placeholder={"Managed CRM systems ensuring accurate data entry\nCreated performance tracking sheets in Excel"}
-                    className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[100px]"
+                  <label className={labelClass}>Responsibilities & Achievements</label>
+                  <RichEditor
+                    value={watch(`workExperience.${i}.responsibilities`) || ""}
+                    onChange={(v) => setValue(`workExperience.${i}.responsibilities`, v)}
+                    placeholder="Use the toolbar to format — add bullet points, bold key metrics, italicize tools..."
+                    minHeight="120px"
                   />
                 </div>
               </div>
@@ -358,11 +370,12 @@ export function CvOptimizer() {
                   <Field label="Tools Used" reg={register(`projects.${i}.tools`)} placeholder="Excel, Power Query, DAX" />
                 </div>
                 <div className="mt-4">
-                  <label className={labelClass}>Details (one per line)</label>
-                  <Textarea
-                    {...register(`projects.${i}.details`)}
-                    placeholder="Cleaned and transformed customer sales data using Power Query"
-                    className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[80px]"
+                  <label className={labelClass}>Details</label>
+                  <RichEditor
+                    value={watch(`projects.${i}.details`) || ""}
+                    onChange={(v) => setValue(`projects.${i}.details`, v)}
+                    placeholder="Describe what you did, tools used, and outcomes..."
+                    minHeight="100px"
                   />
                 </div>
               </div>

@@ -1,5 +1,24 @@
 import type { CVData } from "./cv-parser";
 
+function htmlToLines(html: string): string[] {
+  if (!html) return [];
+  if (!html.includes("<")) return html.split("\n").filter(Boolean);
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  const lines: string[] = [];
+  const listItems = div.querySelectorAll("li");
+  if (listItems.length > 0) {
+    listItems.forEach((li) => {
+      const text = li.textContent?.trim();
+      if (text) lines.push(text);
+    });
+  } else {
+    const text = div.textContent?.trim();
+    if (text) lines.push(...text.split("\n").filter(Boolean));
+  }
+  return lines;
+}
+
 // CV Generation System Specification — aligned with Josiah's ATS standard
 // Font: Palatino Linotype (Word) / Times (PDF)
 // Name 22pt bold + tagline below | Contact stacked right
@@ -183,7 +202,7 @@ export async function exportToPdf(data: CVData): Promise<void> {
       const companyLine = [exp.company, exp.location].filter(Boolean).join(" — ");
       if (companyLine) meta(companyLine);
       y += 0.5;
-      for (const b of exp.responsibilities.split("\n").filter(Boolean)) { bullet(b); }
+      for (const b of htmlToLines(exp.responsibilities)) { bullet(b); }
       if (i < data.workExperience.length - 1) y += 2.5;
     }
     y += 2;
@@ -200,7 +219,7 @@ export async function exportToPdf(data: CVData): Promise<void> {
         meta([proj.context, proj.tools].filter(Boolean).join(" — "));
       }
       y += 0.5;
-      for (const d of proj.details.split("\n").filter(Boolean)) { bullet(d); }
+      for (const d of htmlToLines(proj.details)) { bullet(d); }
       if (i < data.projects.length - 1) y += 2;
     }
     y += 2;
@@ -216,7 +235,7 @@ export async function exportToPdf(data: CVData): Promise<void> {
       const inst = [edu.institution, edu.location].filter(Boolean).join(" — ");
       if (inst) meta(inst);
       if (edu.details) {
-        for (const d of edu.details.split("\n").filter(Boolean)) { body(d, 5); }
+        for (const d of htmlToLines(edu.details)) { body(d, 5); }
       }
       if (i < data.education.length - 1) y += 2;
     }
@@ -404,7 +423,7 @@ export async function exportToDocx(data: CVData): Promise<void> {
       addTitleDate(exp.jobTitle, dates);
       const companyLine = [exp.company, exp.location].filter(Boolean).join(" — ");
       if (companyLine) addMeta(companyLine);
-      for (const b of exp.responsibilities.split("\n").filter(Boolean)) { addBullet(b); }
+      for (const b of htmlToLines(exp.responsibilities)) { addBullet(b); }
     }
   }
 
@@ -416,7 +435,7 @@ export async function exportToDocx(data: CVData): Promise<void> {
       if (proj.context || proj.tools) {
         addMeta([proj.context, proj.tools].filter(Boolean).join(" — "));
       }
-      for (const d of proj.details.split("\n").filter(Boolean)) { addBullet(d); }
+      for (const d of htmlToLines(proj.details)) { addBullet(d); }
     }
   }
 
@@ -428,7 +447,7 @@ export async function exportToDocx(data: CVData): Promise<void> {
       const inst = [edu.institution, edu.location].filter(Boolean).join(" — ");
       if (inst) addMeta(inst);
       if (edu.details) {
-        for (const d of edu.details.split("\n").filter(Boolean)) { addBody(d); }
+        for (const d of htmlToLines(edu.details)) { addBody(d); }
       }
     }
   }

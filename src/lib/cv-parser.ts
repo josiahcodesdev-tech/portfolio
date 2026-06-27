@@ -1147,7 +1147,7 @@ export function calculateATSScore(data: CVData): ATSScore {
         data.workExperience.length > 0 &&
         data.workExperience.every(
           (exp) =>
-            exp.responsibilities.split("\n").filter(Boolean).length >= 2,
+            (exp.responsibilities.match(/<li>/gi) || exp.responsibilities.split("\n").filter(Boolean)).length >= 2,
         ),
       tip: "Include at least 2-3 bullet points per role describing key contributions.",
     },
