@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RichEditor, linesToRichHtml } from "@/components/rich-editor";
+import { AiFieldAssist, useAiReview } from "@/components/ai-field-assist";
 import type { CVData, ATSScore } from "@/lib/cv-parser";
 
 const STEPS = ["Upload", "Edit Sections", "ATS Analysis", "Download"] as const;
@@ -67,6 +68,8 @@ export function CvOptimizer() {
   const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: "projects" });
   const { fields: certFields, append: appendCert, remove: removeCert } = useFieldArray({ control, name: "certifications" });
   const { fields: refFields, append: appendRef, remove: removeRef } = useFieldArray({ control, name: "references" });
+
+  const { review: aiReview, loading: reviewLoading, runReview } = useAiReview();
 
   const processFile = useCallback(
     async (file: File) => {
@@ -361,7 +364,14 @@ export function CvOptimizer() {
           <Section title="Contact Information">
             <div className="grid sm:grid-cols-2 gap-5">
               <Field label="Full Name" reg={register("contactInfo.fullName")} placeholder="Josiah Kamau Mwangi" />
-              <Field label="Tagline" reg={register("contactInfo.tagline")} placeholder="Data Analyst | IT Support | BI" />
+              <AiFieldAssist
+                field="tagline"
+                currentValue={watch("contactInfo.tagline") || ""}
+                context={{ fullName: watch("contactInfo.fullName") || "" }}
+                onAccept={(v) => setValue("contactInfo.tagline", v)}
+              >
+                <Field label="Tagline" reg={register("contactInfo.tagline")} placeholder="Data Analyst | IT Support | BI" />
+              </AiFieldAssist>
               <Field label="Email" reg={register("contactInfo.email")} placeholder="josiah@example.com" />
               <Field label="Phone" reg={register("contactInfo.phone")} placeholder="+254 796 429 778" />
               <Field label="Location" reg={register("contactInfo.location")} placeholder="Nairobi, Kenya" />
@@ -371,11 +381,18 @@ export function CvOptimizer() {
 
           {/* Professional Summary */}
           <Section title="Professional Summary">
-            <Textarea
-              {...register("professionalSummary")}
-              placeholder="4-6 sentences summarising your professional background, key tools, and career goal..."
-              className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
-            />
+            <AiFieldAssist
+              field="professionalSummary"
+              currentValue={watch("professionalSummary") || ""}
+              context={{ fullName: watch("contactInfo.fullName") || "", tagline: watch("contactInfo.tagline") || "" }}
+              onAccept={(v) => setValue("professionalSummary", v)}
+            >
+              <Textarea
+                {...register("professionalSummary")}
+                placeholder="4-6 sentences summarising your professional background, key tools, and career goal..."
+                className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
+              />
+            </AiFieldAssist>
             <AiButton label="Enhance Summary with AI" loading={aiLoading === "summary"} onClick={enhanceSummary} />
           </Section>
 
@@ -429,12 +446,22 @@ export function CvOptimizer() {
                 </div>
                 <div className="mt-4">
                   <label className={labelClass}>Responsibilities & Achievements</label>
-                  <RichEditor
-                    value={watch(`workExperience.${i}.responsibilities`) || ""}
-                    onChange={(v) => setValue(`workExperience.${i}.responsibilities`, v)}
-                    placeholder="Use the toolbar to format — add bullet points, bold key metrics, italicize tools..."
-                    minHeight="120px"
-                  />
+                  <AiFieldAssist
+                    field="responsibilities"
+                    currentValue={watch(`workExperience.${i}.jobTitle`) || ""}
+                    context={{ jobTitle: watch(`workExperience.${i}.jobTitle`) || "", company: watch(`workExperience.${i}.company`) || "" }}
+                    onAccept={(v) => {
+                      const html = "<ul>" + v.split("\n").filter(Boolean).map((l) => `<li>${l.replace(/^[-•]\s*/, "")}</li>`).join("") + "</ul>";
+                      setValue(`workExperience.${i}.responsibilities`, html);
+                    }}
+                  >
+                    <RichEditor
+                      value={watch(`workExperience.${i}.responsibilities`) || ""}
+                      onChange={(v) => setValue(`workExperience.${i}.responsibilities`, v)}
+                      placeholder="Use the toolbar to format — add bullet points, bold key metrics, italicize tools..."
+                      minHeight="120px"
+                    />
+                  </AiFieldAssist>
                   <AiButton label="Enhance Bullets with AI" loading={aiLoading === `exp-${i}`} onClick={() => enhanceBullets(i)} />
                 </div>
               </div>
@@ -558,14 +585,56 @@ export function CvOptimizer() {
           {/* Recommendations before analysis */}
           <Recommendations getValues={getValues} />
 
+          {/* AI Structure Review */}
+          {aiReview && (
+            <div className="bg-light-gray rounded-2xl p-6 sm:p-8">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-sans text-base font-bold text-navy">AI Quality Review</h3>
+                <span className={`px-3 py-1 text-xs font-bold rounded-full ${
+                  aiReview.score >= 80 ? "bg-green-100 text-green-700" :
+                  aiReview.score >= 50 ? "bg-yellow-100 text-yellow-700" :
+                  "bg-red-100 text-red-700"
+                }`}>
+                  {aiReview.score}/100
+                </span>
+              </div>
+              <ul className="space-y-2">
+                {aiReview.issues.map((issue, i) => (
+                  <li key={i} className="flex items-start gap-2 text-sm">
+                    <span className={`mt-0.5 text-xs ${
+                      issue.severity === "error" ? "text-red-500" :
+                      issue.severity === "warning" ? "text-yellow-500" : "text-blue-400"
+                    }`}>
+                      {issue.severity === "error" ? "●" : issue.severity === "warning" ? "▲" : "ℹ"}
+                    </span>
+                    <span className="text-dark-text">
+                      <span className="font-medium">{issue.field}:</span> {issue.message}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4">
             <Button type="button" variant="outline" onClick={startOver} className="border-2 border-navy text-navy hover:bg-navy hover:text-white font-semibold rounded-full px-6 py-5 text-sm cursor-pointer transition-all">
               <ArrowLeft className="w-4 h-4 mr-2" /> Start Over
             </Button>
-            <Button type="button" onClick={runATSAnalysis} className="bg-gold text-navy font-bold hover:bg-gold-hover rounded-full px-6 py-5 text-sm cursor-pointer transition-all">
-              Analyse CV <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
+            <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => runReview(getValues() as unknown as Record<string, unknown>)}
+                disabled={reviewLoading}
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-gold bg-gold-light hover:bg-gold hover:text-navy rounded-full transition-all cursor-pointer disabled:opacity-50"
+              >
+                {reviewLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                AI Review
+              </button>
+              <Button type="button" onClick={runATSAnalysis} className="bg-gold text-navy font-bold hover:bg-gold-hover rounded-full px-6 py-5 text-sm cursor-pointer transition-all">
+                Analyse CV <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RichEditor } from "@/components/rich-editor";
+import { AiFieldAssist } from "@/components/ai-field-assist";
 
 interface CoverLetterData {
   fullName: string;
@@ -44,7 +45,7 @@ export function CoverLetterBuilder() {
   const [step, setStep] = useState(0);
   const [generatedLetter, setGeneratedLetter] = useState("");
 
-  const { register, getValues, reset, watch } = useForm<CoverLetterData>({
+  const { register, getValues, reset, watch, setValue } = useForm<CoverLetterData>({
     defaultValues: {
       fullName: "",
       email: "",
@@ -251,33 +252,54 @@ export function CoverLetterBuilder() {
             <label className={labelClass}>
               Key qualifications relevant to this role (one per line)
             </label>
-            <Textarea
-              {...register("qualifications")}
-              placeholder={"Bachelor of Science in Business Information Technology\nCybersecurity Awareness Training — ICT Authority\nProficient in Excel, SQL, SPSS, Power BI"}
-              className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
-            />
+            <AiFieldAssist
+              field="qualifications"
+              currentValue={watch("qualifications") || ""}
+              context={{ jobTitle: watch("jobTitle") || "", companyName: watch("companyName") || "" }}
+              onAccept={(v) => setValue("qualifications", v)}
+            >
+              <Textarea
+                {...register("qualifications")}
+                placeholder={"Bachelor of Science in Business Information Technology\nCybersecurity Awareness Training — ICT Authority\nProficient in Excel, SQL, SPSS, Power BI"}
+                className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
+              />
+            </AiFieldAssist>
           </SectionCard>
 
           <SectionCard title="Relevant Experience">
             <label className={labelClass}>
               Key achievements and experience highlights (one per line)
             </label>
-            <Textarea
-              {...register("relevantExperience")}
-              placeholder={"Managed CRM systems with accurate data entry and pipeline reporting\nBuilt interactive Excel dashboards for sales analysis\nProvided IT support to 50+ hospital staff"}
-              className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
-            />
+            <AiFieldAssist
+              field="relevantExperience"
+              currentValue={watch("relevantExperience") || ""}
+              context={{ jobTitle: watch("jobTitle") || "", companyName: watch("companyName") || "" }}
+              onAccept={(v) => setValue("relevantExperience", v)}
+            >
+              <Textarea
+                {...register("relevantExperience")}
+                placeholder={"Managed CRM systems with accurate data entry and pipeline reporting\nBuilt interactive Excel dashboards for sales analysis\nProvided IT support to 50+ hospital staff"}
+                className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[120px]"
+              />
+            </AiFieldAssist>
           </SectionCard>
 
           <SectionCard title="Why This Company?">
             <label className={labelClass}>
               What draws you to this company? (used in the opening paragraph)
             </label>
-            <Textarea
-              {...register("whyThisCompany")}
-              placeholder="I am particularly drawn to your organisation's commitment to data-driven decision-making and its impact across the region."
-              className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[80px]"
-            />
+            <AiFieldAssist
+              field="whyThisCompany"
+              currentValue={watch("whyThisCompany") || ""}
+              context={{ jobTitle: watch("jobTitle") || "", companyName: watch("companyName") || "" }}
+              onAccept={(v) => setValue("whyThisCompany", v)}
+            >
+              <Textarea
+                {...register("whyThisCompany")}
+                placeholder="I am particularly drawn to your organisation's commitment to data-driven decision-making and its impact across the region."
+                className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[80px]"
+              />
+            </AiFieldAssist>
           </SectionCard>
 
           <div className="flex items-center justify-between pt-4">
