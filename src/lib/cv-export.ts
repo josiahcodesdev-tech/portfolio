@@ -246,10 +246,20 @@ export async function exportToPdf(data: CVData): Promise<void> {
   }
 
   // ═══ REFERENCES ═══
-  if (data.references) {
+  if (data.references.length) {
     heading("References");
-    for (const line of data.references.split("\n").filter(Boolean)) {
-      body(line);
+    for (const ref of data.references) {
+      checkPage(LH * 4);
+      doc.setFont("times", "bold");
+      doc.setFontSize(BODY);
+      doc.setTextColor(26, 26, 46);
+      doc.text(ref.name, mL, y);
+      y += LH;
+      const roleLine = [ref.title, ref.organization].filter(Boolean).join(", ");
+      if (roleLine) { meta(roleLine); }
+      const contactLine = [ref.email, ref.phone].filter(Boolean).join("  |  ");
+      if (contactLine) { meta(contactLine); }
+      y += 1.5;
     }
   }
 
@@ -444,9 +454,18 @@ export async function exportToDocx(data: CVData): Promise<void> {
   }
 
   // ═══ REFERENCES ═══
-  if (data.references) {
+  if (data.references.length) {
     addHeading("References");
-    for (const line of data.references.split("\n").filter(Boolean)) { addBody(line); }
+    for (const ref of data.references) {
+      children.push(new Paragraph({
+        spacing: { after: 20 },
+        children: [new TextRun({ text: ref.name, bold: true, size: BODY, font: FONT, color: NAVY })],
+      }));
+      const roleLine = [ref.title, ref.organization].filter(Boolean).join(", ");
+      if (roleLine) addMeta(roleLine);
+      const contactLine = [ref.email, ref.phone].filter(Boolean).join("  |  ");
+      if (contactLine) addMeta(contactLine);
+    }
   }
 
   // Build and save

@@ -43,7 +43,14 @@ export interface CVData {
     issuer: string;
   }[];
   languages: string;
-  references: string;
+  references: {
+    id: string;
+    name: string;
+    title: string;
+    organization: string;
+    email: string;
+    phone: string;
+  }[];
 }
 
 export interface ATSScoreItem {
@@ -600,10 +607,7 @@ export function parseRawTextToCV(rawText: string): CVData {
     .filter((l) => l.length > 1)
     .join(" | ");
 
-  const references = sections.references
-    .map((l) => stripBullet(l))
-    .filter((l) => l.length > 1)
-    .join("\n");
+  const references = parseReferences(sections.references);
 
   // Summary: use labeled summary, or build from unknown prose
   let professionalSummary = sections.summary
@@ -646,7 +650,7 @@ export function parseRawTextToCV(rawText: string): CVData {
     education,
     certifications,
     languages: cleanText(languages),
-    references: cleanText(references),
+    references,
   };
 }
 
@@ -924,6 +928,53 @@ function parseCertifications(lines: string[]): CVData["certifications"] {
 // ═══════════════════════════════════════════════════
 //  PROJECTS PARSER
 // ═══════════════════════════════════════════════════
+//  REFERENCES PARSER
+// ═══════════════════════════════════════════════════
+
+function parseReferences(lines: string[]): CVData["references"] {
+  if (!lines.length) return [];
+
+  const refs: CVData["references"] = [];
+  let current: CVData["references"][0] | null = null;
+
+  for (const line of lines) {
+    const cleaned = stripBullet(line).trim();
+    if (!cleaned) continue;
+
+    const emailMatch = cleaned.match(/[\w.+-]+@[\w.-]+\.\w{2,}/);
+    const phoneMatch = cleaned.match(/(?:\+?\d{1,3}[\s.-]?)?\(?\d{2,4}\)?[\s.-]?\d{3,4}[\s.-]?\d{3,4}/);
+
+    if (emailMatch || phoneMatch) {
+      if (current) {
+        if (emailMatch) current.email = emailMatch[0];
+        if (phoneMatch) current.phone = phoneMatch[0].trim();
+      }
+      continue;
+    }
+
+    // Lines with titles/roles often contain dashes or commas
+    if (current && !current.title && (cleaned.includes(",") || cleaned.includes("—") || cleaned.includes("-"))) {
+      const parts = cleaned.split(/\s*[,—–\-]\s*/);
+      current.title = parts[0] || "";
+      current.organization = parts.slice(1).join(", ");
+      continue;
+    }
+
+    // New referee name (short line, mostly alpha)
+    if (/^[A-Za-z\s.'-]+$/.test(cleaned) && cleaned.length < 50) {
+      if (current) refs.push(current);
+      current = { id: uid(), name: cleaned, title: "", organization: "", email: "", phone: "" };
+    } else if (current) {
+      if (!current.title) current.title = cleaned;
+      else if (!current.organization) current.organization = cleaned;
+    }
+  }
+
+  if (current) refs.push(current);
+  return refs;
+}
+
+// ═══════════════════════════════════════════════════
 
 function parseProjects(lines: string[]): CVData["projects"] {
   if (!lines.length) return [];
@@ -1152,6 +1203,6 @@ export function emptyCVData(): CVData {
     education: [],
     certifications: [],
     languages: "",
-    references: "",
+    references: [],
   };
 }

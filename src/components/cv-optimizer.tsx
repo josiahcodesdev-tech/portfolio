@@ -54,7 +54,7 @@ export function CvOptimizer() {
       education: [],
       certifications: [],
       languages: "",
-      references: "",
+      references: [],
     },
   });
 
@@ -63,6 +63,7 @@ export function CvOptimizer() {
   const { fields: skillFields, append: appendSkill, remove: removeSkill } = useFieldArray({ control, name: "skillCategories" });
   const { fields: projFields, append: appendProj, remove: removeProj } = useFieldArray({ control, name: "projects" });
   const { fields: certFields, append: appendCert, remove: removeCert } = useFieldArray({ control, name: "certifications" });
+  const { fields: refFields, append: appendRef, remove: removeRef } = useFieldArray({ control, name: "references" });
 
   const processFile = useCallback(
     async (file: File) => {
@@ -137,7 +138,7 @@ export function CvOptimizer() {
       education: [],
       certifications: [],
       languages: "",
-      references: "",
+      references: [],
     });
     setStep(0);
     setAtsScore(null);
@@ -166,7 +167,7 @@ export function CvOptimizer() {
       ],
       certifications: [],
       languages: "",
-      references: "",
+      references: [],
     });
     setStep(1);
   }, [reset]);
@@ -321,8 +322,8 @@ export function CvOptimizer() {
                   <Field label="Company" reg={register(`workExperience.${i}.company`)} placeholder="Vantage Africa" />
                   <Field label="Location" reg={register(`workExperience.${i}.location`)} placeholder="Nairobi, Kenya" />
                   <div className="grid grid-cols-2 gap-3">
-                    <Field label="Start Date" reg={register(`workExperience.${i}.startDate`)} placeholder="May 2025" />
-                    <Field label="End Date" reg={register(`workExperience.${i}.endDate`)} placeholder="Present" />
+                    <DateField label="Start Date" reg={register(`workExperience.${i}.startDate`)} />
+                    <DateField label="End Date" reg={register(`workExperience.${i}.endDate`)} allowPresent />
                   </div>
                 </div>
                 <div className="mt-4">
@@ -384,7 +385,7 @@ export function CvOptimizer() {
                   <Field label="Degree / Qualification" reg={register(`education.${i}.degree`)} placeholder="BSc Business Information Technology" />
                   <Field label="Institution" reg={register(`education.${i}.institution`)} placeholder="South Eastern Kenya University" />
                   <Field label="Location" reg={register(`education.${i}.location`)} placeholder="Nairobi" />
-                  <Field label="Graduation Date" reg={register(`education.${i}.graduationDate`)} placeholder="Oct 2025" />
+                  <DateField label="Graduation Date" reg={register(`education.${i}.graduationDate`)} />
                 </div>
                 <div className="mt-4">
                   <label className={labelClass}>Additional Details</label>
@@ -427,14 +428,31 @@ export function CvOptimizer() {
             />
           </Section>
 
-          {/* References */}
-          <Section title="References">
-            <Textarea
-              {...register("references")}
-              placeholder={"Francis Murimi — ICT Administrator, Muriranjas Sub-County Hospital\nfmurimi2000@gmail.com | +254 742 597 479"}
-              className="bg-white border-gray-200 text-dark-text placeholder:text-gray-400 focus:border-gold rounded-xl min-h-[80px]"
-            />
+          {/* References (dynamic add/remove) */}
+          <Section
+            title="References"
+            onAdd={() => appendRef({ id: uid(), name: "", title: "", organization: "", email: "", phone: "" })}
+          >
+            {refFields.length === 0 && <EmptyState text="No referees yet. Click Add to include one." />}
+            {refFields.map((field, i) => (
+              <div key={field.id} className="bg-white rounded-xl p-5 border border-gray-200 mb-4">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-medium text-gold uppercase tracking-wide">Referee {i + 1}</span>
+                  <RemoveBtn onClick={() => removeRef(i)} />
+                </div>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <Field label="Full Name" reg={register(`references.${i}.name`)} placeholder="Francis Murimi" />
+                  <Field label="Job Title" reg={register(`references.${i}.title`)} placeholder="ICT Administrator" />
+                  <Field label="Organization" reg={register(`references.${i}.organization`)} placeholder="Muriranjas Sub-County Hospital" />
+                  <Field label="Email" reg={register(`references.${i}.email`)} placeholder="fmurimi2000@gmail.com" />
+                  <Field label="Phone" reg={register(`references.${i}.phone`)} placeholder="+254 742 597 479" />
+                </div>
+              </div>
+            ))}
           </Section>
+
+          {/* Recommendations before analysis */}
+          <Recommendations getValues={getValues} />
 
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4">
@@ -538,6 +556,91 @@ function Field({ label, reg, placeholder }: { label: string; reg: ReturnType<typ
     <div>
       <label className={labelClass}>{label}</label>
       <Input {...reg} placeholder={placeholder} className={inputClass} />
+    </div>
+  );
+}
+
+function DateField({ label, reg, allowPresent }: { label: string; reg: ReturnType<typeof Object>; allowPresent?: boolean }) {
+  const [isPresent, setIsPresent] = useState(false);
+
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+      {allowPresent && isPresent ? (
+        <div className="flex items-center gap-2">
+          <Input value="Present" disabled className={inputClass + " bg-light-gray"} />
+          <button
+            type="button"
+            onClick={() => setIsPresent(false)}
+            className="text-xs text-gold font-medium hover:underline cursor-pointer whitespace-nowrap"
+          >
+            Set date
+          </button>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2">
+          <Input type="month" {...reg} className={inputClass} />
+          {allowPresent && (
+            <button
+              type="button"
+              onClick={() => {
+                setIsPresent(true);
+                const input = document.querySelector(`input[name="${(reg as { name: string }).name}"]`) as HTMLInputElement;
+                if (input) {
+                  const nativeInputValueSetter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+                  nativeInputValueSetter?.call(input, "Present");
+                  input.dispatchEvent(new Event("input", { bubbles: true }));
+                }
+              }}
+              className="text-xs text-gold font-medium hover:underline cursor-pointer whitespace-nowrap"
+            >
+              Present
+            </button>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Recommendations({ getValues }: { getValues: () => CVData }) {
+  const data = getValues();
+  const tips: string[] = [];
+
+  if (!data.contactInfo.fullName) tips.push("Add your full name to the contact section.");
+  if (!data.contactInfo.email) tips.push("Include an email address so employers can reach you.");
+  if (!data.contactInfo.phone) tips.push("Add a phone number for direct contact.");
+  if (!data.contactInfo.tagline) tips.push("Add a tagline (e.g. \"Data Analyst | IT Support\") to frame your profile.");
+  if (!data.professionalSummary || data.professionalSummary.split(/\s+/).length < 15) {
+    tips.push("Write a professional summary of 4-6 sentences highlighting your key qualifications.");
+  }
+  if (data.skillCategories.length === 0) tips.push("Add at least one skill category with relevant tools and competencies.");
+  if (data.workExperience.length === 0) tips.push("Add your work experience — even internships count.");
+  if (data.workExperience.some((e) => !e.responsibilities)) {
+    tips.push("Add responsibilities and achievements for each role. Start bullets with action verbs.");
+  }
+  if (data.workExperience.some((e) => !e.startDate || !e.endDate)) {
+    tips.push("Set start and end dates for all positions to improve ATS compatibility.");
+  }
+  if (data.education.length === 0) tips.push("Add your educational background.");
+  if (!data.languages) tips.push("List your language proficiencies (e.g. \"English — Proficient | Swahili — Native\").");
+
+  if (tips.length === 0) return null;
+
+  return (
+    <div className="bg-gold-light/50 border border-gold/20 rounded-2xl p-6 sm:p-8">
+      <div className="flex items-center gap-3 mb-4">
+        <AlertCircle className="w-5 h-5 text-gold shrink-0" />
+        <h3 className="font-sans text-base font-bold text-navy">Recommended Changes</h3>
+      </div>
+      <ul className="space-y-2">
+        {tips.map((tip) => (
+          <li key={tip} className="flex items-start gap-2 text-sm text-dark-text">
+            <span className="text-gold mt-0.5">•</span>
+            {tip}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
